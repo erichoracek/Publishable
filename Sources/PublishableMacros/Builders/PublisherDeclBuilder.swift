@@ -6,7 +6,7 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-import PrincipleMacros
+import SwiftSyntax
 
 internal struct PublisherDeclBuilder: ClassDeclBuilder {
 

@@ -1,15 +1,6 @@
 {
-  "originHash" : "562722fee5c55759fdc591bf9e50bbc7e84d94e5f50c2034e511205e38982b5d",
+  "originHash" : "ceaeb808f20cc07055d201abc00779e6356b1f5d11495dd3e749743c81fa323c",
   "pins" : [
-    {
-      "identity" : "principlemacros",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/NSFatalError/PrincipleMacros",
-      "state" : {
-        "revision" : "b2671db08bc28ee2336bd33517a524de4abeb92a",
-        "version" : "1.0.6"
-      }
-    },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",

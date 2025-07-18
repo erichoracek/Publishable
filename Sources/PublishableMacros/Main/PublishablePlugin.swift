@@ -6,7 +6,8 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-import PrincipleMacros
+import SwiftSyntaxMacros
+import SwiftSyntax
 import SwiftCompilerPlugin
 
 @main

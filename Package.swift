@@ -22,10 +22,6 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/NSFatalError/PrincipleMacros",
-            from: "1.0.6"
-        ),
-        .package(
             url: "https://github.com/swiftlang/swift-syntax",
             "600.0.0" ..< "602.0.0"
         )
@@ -42,10 +38,6 @@ let package = Package(
         .macro(
             name: "PublishableMacros",
             dependencies: [
-                .product(
-                    name: "PrincipleMacros",
-                    package: "PrincipleMacros"
-                ),
                 .product(
                     name: "SwiftCompilerPlugin",
                     package: "swift-syntax"

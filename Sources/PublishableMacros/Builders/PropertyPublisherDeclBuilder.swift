@@ -6,7 +6,9 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-import PrincipleMacros
+import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxBuilder
 
 internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
 
@@ -59,7 +61,7 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
 
     @CodeBlockItemListBuilder
     private func storedPropertiesPublishersFinishCalls() -> CodeBlockItemListSyntax {
-        for property in properties.stored.mutable.instance {
+        for property in properties.stored.mutable.instance.all {
             "_\(property.trimmedName).send(completion: .finished)"
         }
     }
