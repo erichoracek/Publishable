@@ -6,14 +6,15 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-import SwiftSyntaxMacros
-import SwiftSyntax
 import SwiftCompilerPlugin
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 @main
 internal struct PublishablePlugin: CompilerPlugin {
 
     let providingMacros: [any Macro.Type] = [
-        PublishableMacro.self
+        PublishableMacro.self,
+        ObservationPublishedMacro.self
     ]
 }

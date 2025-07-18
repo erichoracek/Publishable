@@ -27,7 +27,9 @@
                     static var user: Person?
 
                     let id: UUID
+                    @ObservationPublished @ObservationIgnored
                     fileprivate(set) var age: Int
+                    @ObservationPublished @ObservationIgnored
                     var name: String
 
                     public var surname: String {
@@ -54,7 +56,9 @@
                     static var user: Person?
 
                     let id: UUID
+                    @ObservationPublished @ObservationIgnored
                     fileprivate(set) var age: Int
+                    @ObservationPublished @ObservationIgnored
                     var name: String
 
                     public var surname: String {
@@ -79,75 +83,32 @@
                         deinit {
                             _age.send(completion: .finished)
                             _name.send(completion: .finished)
-                            _surname.send(completion: .finished)
                         }
 
                         fileprivate let _age = PassthroughSubject<Int, Never>()
-                        var age: AnyPublisher<Int, Never> {
+                        var age: some Publisher<Int, Never> {
                             _storedPropertyPublisher(_age, for: \.age)
                         }
                         fileprivate let _name = PassthroughSubject<String, Never>()
-                        var name: AnyPublisher<String, Never> {
+                        var name: some Publisher<String, Never> {
                             _storedPropertyPublisher(_name, for: \.name)
-                        }
-                        fileprivate let _surname = PassthroughSubject<String, Never>()
-                        public var surname: AnyPublisher<String, Never> {
-                            _storedPropertyPublisher(_surname, for: \.surname)
-                        }
-
-                        internal var fullName: AnyPublisher<String, Never> {
-                            _computedPropertyPublisher(for: \.fullName)
-                        }
-                        package var initials: AnyPublisher<String, Never> {
-                            _computedPropertyPublisher(for: \.initials)
                         }
                     }
 
-                    private enum Observation {
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu_>(_ lhs: __macro_local_6MemberfMu_, _ rhs: __macro_local_6MemberfMu_) -> Bool {
+                        true
+                    }
 
-                        struct ObservationRegistrar: PublishableObservationRegistrar {
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu0_: Equatable>(_ lhs: __macro_local_6MemberfMu0_, _ rhs: __macro_local_6MemberfMu0_) -> Bool {
+                        lhs != rhs
+                    }
 
-                            let underlying = SwiftObservationRegistrar()
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu1_: AnyObject>(_ lhs: __macro_local_6MemberfMu1_, _ rhs: __macro_local_6MemberfMu1_) -> Bool {
+                        lhs !== rhs
+                    }
 
-                            func publish(
-                                _ object: Person,
-                                keyPath: KeyPath<Person, some Any>
-                            ) {
-                                if let keyPath = keyPath as? KeyPath<Person, Int>,
-                                   let subject = subject(for: keyPath, on: object) {
-                                    subject.send(object[keyPath: keyPath])
-                                    return
-                                }
-                                if let keyPath = keyPath as? KeyPath<Person, String>,
-                                   let subject = subject(for: keyPath, on: object) {
-                                    subject.send(object[keyPath: keyPath])
-                                    return
-                                }
-                                assertionFailure("Unknown keyPath: \(keyPath)")
-                            }
-
-                            private func subject(
-                                for keyPath: KeyPath<Person, Int>,
-                                on object: Person
-                            ) -> PassthroughSubject<Int, Never>? {
-                                if keyPath == \.age {
-                                    return object.publisher._age
-                                }
-                                return nil
-                            }
-                            private func subject(
-                                for keyPath: KeyPath<Person, String>,
-                                on object: Person
-                            ) -> PassthroughSubject<String, Never>? {
-                                if keyPath == \.name {
-                                    return object.publisher._name
-                                }
-                                if keyPath == \.surname {
-                                    return object.publisher._surname
-                                }
-                                return nil
-                            }
-                        }
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu2_: Equatable & AnyObject>(_ lhs: __macro_local_6MemberfMu2_, _ rhs: __macro_local_6MemberfMu2_) -> Bool {
+                        lhs != rhs
                     }
                 }
 
@@ -165,7 +126,28 @@
                 @Publishable @Observable
                 public final class Person {
 
+                    static var user: Person?
+
+                    let id: UUID
+                    @ObservationPublished @ObservationIgnored
+                    fileprivate(set) var age: Int
+                    @ObservationPublished @ObservationIgnored
                     var name: String
+
+                    public var surname: String {
+                        didSet {
+                            print(oldValue)
+                        }
+                    }
+
+                    internal var fullName: String {
+                        "\(name) \(surname)"
+                    }
+
+                    package var initials: String {
+                        get { "\(name.prefix(1))\(surname.prefix(1))" }
+                        set { _ = newValue }
+                    }
                 }
                 """#,
                 expandedSource:
@@ -174,7 +156,28 @@
                 @Observable
                 public final class Person {
 
+                    static var user: Person?
+
+                    let id: UUID
+                    @ObservationPublished @ObservationIgnored
+                    fileprivate(set) var age: Int
+                    @ObservationPublished @ObservationIgnored
                     var name: String
+
+                    public var surname: String {
+                        didSet {
+                            print(oldValue)
+                        }
+                    }
+
+                    internal var fullName: String {
+                        "\(name) \(surname)"
+                    }
+
+                    package var initials: String {
+                        get { "\(name.prefix(1))\(surname.prefix(1))" }
+                        set { _ = newValue }
+                    }
 
                     public private(set) lazy var publisher = PropertyPublisher(object: self)
 
@@ -182,46 +185,34 @@
                     public final class PropertyPublisher: AnyPropertyPublisher<Person> {
 
                         deinit {
+                            _age.send(completion: .finished)
                             _name.send(completion: .finished)
                         }
 
+                        fileprivate let _age = PassthroughSubject<Int, Never>()
+                        var age: some Publisher<Int, Never> {
+                            _storedPropertyPublisher(_age, for: \.age)
+                        }
                         fileprivate let _name = PassthroughSubject<String, Never>()
-                        var name: AnyPublisher<String, Never> {
+                        var name: some Publisher<String, Never> {
                             _storedPropertyPublisher(_name, for: \.name)
                         }
-
-
                     }
 
-                    private enum Observation {
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu_>(_ lhs: __macro_local_6MemberfMu_, _ rhs: __macro_local_6MemberfMu_) -> Bool {
+                        true
+                    }
 
-                        @MainActor
-                        struct ObservationRegistrar: MainActorPublishableObservationRegistrar {
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu0_: Equatable>(_ lhs: __macro_local_6MemberfMu0_, _ rhs: __macro_local_6MemberfMu0_) -> Bool {
+                        lhs != rhs
+                    }
 
-                            let underlying = SwiftObservationRegistrar()
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu1_: AnyObject>(_ lhs: __macro_local_6MemberfMu1_, _ rhs: __macro_local_6MemberfMu1_) -> Bool {
+                        lhs !== rhs
+                    }
 
-                            func publish(
-                                _ object: Person,
-                                keyPath: KeyPath<Person, some Any>
-                            ) {
-                                if let keyPath = keyPath as? KeyPath<Person, String>,
-                                   let subject = subject(for: keyPath, on: object) {
-                                    subject.send(object[keyPath: keyPath])
-                                    return
-                                }
-                                assertionFailure("Unknown keyPath: \(keyPath)")
-                            }
-
-                            private func subject(
-                                for keyPath: KeyPath<Person, String>,
-                                on object: Person
-                            ) -> PassthroughSubject<String, Never>? {
-                                if keyPath == \.name {
-                                    return object.publisher._name
-                                }
-                                return nil
-                            }
-                        }
+                    private nonisolated func shouldNotifyObservers<__macro_local_6MemberfMu2_: Equatable & AnyObject>(_ lhs: __macro_local_6MemberfMu2_, _ rhs: __macro_local_6MemberfMu2_) -> Bool {
+                        lhs != rhs
                     }
                 }
 

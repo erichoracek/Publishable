@@ -6,9 +6,9 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-import SwiftSyntaxMacros
 import SwiftSyntax
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
 
@@ -30,8 +30,6 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
                     \(deinitializer())
 
                     \(storedPropertiesPublishers().formatted())
-
-                    \(computedPropertiesPublishers().formatted())
                 }
                 """
             ]
@@ -43,8 +41,6 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
                     \(deinitializer())
 
                     \(storedPropertiesPublishers().formatted())
-
-                    \(computedPropertiesPublishers().formatted())
                 }
                 """
             ]
@@ -61,35 +57,21 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
 
     @CodeBlockItemListBuilder
     private func storedPropertiesPublishersFinishCalls() -> CodeBlockItemListSyntax {
-        for property in properties.stored.mutable.instance.all {
+        for property in properties.stored.mutable.instance.all where property.declaration.hasMacroApplication(ObservationPublishedMacro.name) {
             "_\(property.trimmedName).send(completion: .finished)"
         }
     }
 
     @MemberBlockItemListBuilder
     private func storedPropertiesPublishers() -> MemberBlockItemListSyntax {
-        for property in properties.stored.mutable.instance {
+        for property in properties.stored.mutable.instance where property.declaration.hasMacroApplication(ObservationPublishedMacro.name) {
             let accessControlLevel = property.declaration.accessControlLevel(inheritedBy: .peer, maxAllowed: .public)
             let name = property.trimmedName
             let type = property.inferredType
             """
             fileprivate let _\(name) = PassthroughSubject<\(type), Never>()
-            \(accessControlLevel)var \(name): AnyPublisher<\(type), Never> {
+            \(accessControlLevel)var \(name): some Publisher<\(type), Never> {
                 _storedPropertyPublisher(_\(name), for: \\.\(name))
-            }
-            """
-        }
-    }
-
-    @MemberBlockItemListBuilder
-    private func computedPropertiesPublishers() -> MemberBlockItemListSyntax {
-        for property in properties.computed.instance {
-            let accessControlLevel = property.declaration.accessControlLevel(inheritedBy: .peer, maxAllowed: .public)
-            let name = property.trimmedName
-            let type = property.inferredType
-            """
-            \(accessControlLevel)var \(name): AnyPublisher<\(type), Never> {
-                _computedPropertyPublisher(for: \\.\(name))
             }
             """
         }
