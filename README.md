@@ -67,7 +67,7 @@ person.surname = "Strzelecki"
 
 For properties annotated with the `@ObservationPublished @ObservationIgnored` macro, the
 `@ObservationPublished`  macro synthesizes the same getter/setter/etc. as `@ObservationTracked`,
-but with additional calls to publish updates to the associated `publisher.property` `Publisher.
+but with additional calls to publish updates to the associated `publisher.property` `Publisher`.
 
 ## Installation
 
