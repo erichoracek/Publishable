@@ -45,7 +45,7 @@ public struct ObservationPublishedMacro: AccessorMacro {
         let setAccessor: AccessorDeclSyntax =
             """
             set {
-              guard shouldNotifyObservers(_\(identifier), newValue) else {
+              guard publishable_shouldNotifyObservers(_\(identifier), newValue) else {
                 _\(identifier) = newValue
                 return
               }

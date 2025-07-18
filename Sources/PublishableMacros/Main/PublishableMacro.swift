@@ -117,7 +117,7 @@ extension PublishableMacro: MemberMacro {
         let memberGeneric = context.makeUniqueName("Member")
         return
             """
-             private nonisolated func shouldNotifyObservers<\(memberGeneric)>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { true }
+             private nonisolated func publishable_shouldNotifyObservers<\(memberGeneric)>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { true }
             """
     }
 
@@ -125,7 +125,7 @@ extension PublishableMacro: MemberMacro {
         let memberGeneric = context.makeUniqueName("Member")
         return
             """
-            private nonisolated func shouldNotifyObservers<\(memberGeneric): Equatable>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs != rhs }
+            private nonisolated func publishable_shouldNotifyObservers<\(memberGeneric): Equatable>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs != rhs }
             """
     }
 
@@ -133,7 +133,7 @@ extension PublishableMacro: MemberMacro {
         let memberGeneric = context.makeUniqueName("Member")
         return
             """
-             private nonisolated func shouldNotifyObservers<\(memberGeneric): AnyObject>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs !== rhs }
+             private nonisolated func publishable_shouldNotifyObservers<\(memberGeneric): AnyObject>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs !== rhs }
             """
     }
 
@@ -141,7 +141,7 @@ extension PublishableMacro: MemberMacro {
         let memberGeneric = context.makeUniqueName("Member")
         return
             """
-            private nonisolated func shouldNotifyObservers<\(memberGeneric): Equatable & AnyObject>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs != rhs }
+            private nonisolated func publishable_shouldNotifyObservers<\(memberGeneric): Equatable & AnyObject>(_ lhs: \(memberGeneric), _ rhs: \(memberGeneric)) -> Bool { lhs != rhs }
             """
     }
 }

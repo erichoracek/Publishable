@@ -27,7 +27,7 @@ import Observation
     names: named(_publisher),
     named(publisher),
     named(PropertyPublisher),
-    named(shouldNotifyObservers)
+    named(publishable_shouldNotifyObservers)
 )
 @attached(
     extension,
