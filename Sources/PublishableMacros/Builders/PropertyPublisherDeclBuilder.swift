@@ -73,7 +73,12 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
     @MemberBlockItemListBuilder
     private func storedPropertiesPublishers() -> MemberBlockItemListSyntax {
         for property in properties.stored.mutable.instance where property.declaration.hasMacroApplication(ObservationPublishedMacro.name) {
-            let accessControlLevel = property.declaration.accessControlLevel(inheritedBy: .peer, maxAllowed: .public)
+            let accessControlLevel = property.declaration.accessControlLevel(
+                inheritedBy: .peer,
+                minAllowed: .fileprivate,
+                maxAllowed: .public
+            )
+
             let name = property.trimmedName
             let type = property.inferredType
             if let ifConfig = property.ifConfig {

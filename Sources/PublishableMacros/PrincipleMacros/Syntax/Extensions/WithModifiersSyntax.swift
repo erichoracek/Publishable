@@ -45,6 +45,7 @@ extension WithModifiersSyntax {
 
     public func accessControlLevel(
         inheritedBy inheritingDeclaration: InheritingDeclaration,
+        minAllowed: Keyword?,
         maxAllowed: Keyword
     ) -> TokenSyntax? {
         guard let accessControlLevel,
@@ -54,9 +55,18 @@ extension WithModifiersSyntax {
             return nil
         }
 
+        let minAllowedIndex = minAllowed.flatMap { Keyword.accessControlLevels.firstIndex(of: $0) }
+
         guard index <= maxAllowedIndex else {
             let tokenKind = TokenKind.accessControlLevels[maxAllowedIndex]
-            return TokenSyntax(tokenKind, presence: .present)
+            return TokenSyntax(tokenKind, presence: .present).withTrailingSpace
+        }
+
+        if let minAllowedIndex {
+            guard index >= minAllowedIndex else {
+                let tokenKind = TokenKind.accessControlLevels[minAllowedIndex]
+                return TokenSyntax(tokenKind, presence: .present).withTrailingSpace
+            }
         }
 
         switch inheritingDeclaration {

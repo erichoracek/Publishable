@@ -22,6 +22,7 @@ extension DeclBuilder {
         let settings = settings.accessControlLevel
         return basicDeclaration.accessControlLevel(
             inheritedBy: settings.inheritingDeclaration,
+            minAllowed: nil,
             maxAllowed: settings.maxAllowed
         )
     }
