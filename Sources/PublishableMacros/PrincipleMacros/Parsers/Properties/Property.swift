@@ -9,7 +9,7 @@
 import SwiftSyntax
 
 @dynamicMemberLookup
-public final class Property: ParserResult {
+public final class Property {
 
     public let declaration: VariableDeclSyntax
     public let binding: PatternBindingSyntax
@@ -20,17 +20,27 @@ public final class Property: ParserResult {
     public let mutability: Mutability
     public let observers: StoredObservers?
     public let accessors: ComputedAccessors?
+    public let ifConfig: IfConfig?
+
+    public struct IfConfig {
+        let poundKeyword: TokenSyntax
+        let condition: ExprSyntax?
+    }
 
     init(
         declaration: VariableDeclSyntax,
         binding: PatternBindingSyntax,
         name: TokenSyntax,
-        inferredType: TypeSyntax
+        inferredType: TypeSyntax,
+        ifConfig: IfConfigClauseSyntax?
     ) {
         self.declaration = declaration
         self.binding = binding
         self.trimmedName = name.trimmed
         self.inferredType = inferredType
+        self.ifConfig = ifConfig.map { ifConfig in
+            .init(poundKeyword: ifConfig.poundKeyword, condition: ifConfig.condition)
+        }
 
         if declaration.bindingSpecifier.tokenKind == .keyword(.let) {
             self.kind = .stored

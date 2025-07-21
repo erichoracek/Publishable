@@ -8,7 +8,7 @@
 
 import SwiftSyntax
 
-public struct EnumCasesList: _ParserResultsCollection {
+public struct EnumCasesList {
 
     public let all: [EnumCase]
 

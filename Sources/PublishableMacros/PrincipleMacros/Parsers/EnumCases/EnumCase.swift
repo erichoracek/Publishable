@@ -9,7 +9,7 @@
 import SwiftSyntax
 
 @dynamicMemberLookup
-public final class EnumCase: ParserResult {
+public final class EnumCase {
 
     public let declaration: EnumCaseDeclSyntax
     public let element: EnumCaseElementSyntax

@@ -58,7 +58,15 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
     @CodeBlockItemListBuilder
     private func storedPropertiesPublishersFinishCalls() -> CodeBlockItemListSyntax {
         for property in properties.stored.mutable.instance.all where property.declaration.hasMacroApplication(ObservationPublishedMacro.name) {
-            "_\(property.trimmedName).send(completion: .finished)"
+            if let ifConfig = property.ifConfig {
+                """
+                \(raw: ifConfig.poundKeyword.text) \(raw: ifConfig.condition?.trimmedDescription ?? "")
+                _\(property.trimmedName).send(completion: .finished)
+                #endif
+                """
+            } else {
+                "_\(property.trimmedName).send(completion: .finished)"
+            }
         }
     }
 
@@ -68,12 +76,23 @@ internal struct PropertyPublisherDeclBuilder: ClassDeclBuilder {
             let accessControlLevel = property.declaration.accessControlLevel(inheritedBy: .peer, maxAllowed: .public)
             let name = property.trimmedName
             let type = property.inferredType
-            """
-            fileprivate let _\(name) = PassthroughSubject<\(type), Never>()
-            \(accessControlLevel)var \(name): some Publisher<\(type), Never> {
-                _storedPropertyPublisher(_\(name), for: \\.\(name))
+            if let ifConfig = property.ifConfig {
+                """
+                \(raw: ifConfig.poundKeyword.text) \(raw: ifConfig.condition?.trimmedDescription ?? "")
+                fileprivate let _\(name) = PassthroughSubject<\(type), Never>()
+                \(accessControlLevel)var \(name): some Publisher<\(type), Never> {
+                    _storedPropertyPublisher(_\(name), for: \\.\(name))
+                }
+                #endif
+                """
+            } else {
+                """
+                fileprivate let _\(name) = PassthroughSubject<\(type), Never>()
+                \(accessControlLevel)var \(name): some Publisher<\(type), Never> {
+                    _storedPropertyPublisher(_\(name), for: \\.\(name))
+                }
+                """
             }
-            """
         }
     }
 }

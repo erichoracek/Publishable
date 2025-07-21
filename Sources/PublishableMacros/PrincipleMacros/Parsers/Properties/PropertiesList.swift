@@ -8,12 +8,29 @@
 
 import SwiftSyntax
 
-public struct PropertiesList: _ParserResultsCollection {
+public struct PropertiesList: RandomAccessCollection {
+
+    public typealias Element = Property
 
     public let all: [Property]
 
     init(_ all: [Property]) {
         self.all = all
+    }
+}
+
+extension PropertiesList {
+
+    public var startIndex: Int {
+        all.startIndex
+    }
+
+    public var endIndex: Int {
+        all.endIndex
+    }
+
+    public subscript(position: Int) -> Element {
+        all[position]
     }
 }
 

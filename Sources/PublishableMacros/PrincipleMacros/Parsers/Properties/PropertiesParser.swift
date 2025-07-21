@@ -9,14 +9,39 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public enum PropertiesParser: _Parser {
+public enum PropertiesParser {
+
+    public static func parse(
+        memberBlock: MemberBlockSyntax,
+        in context: some MacroExpansionContext
+    ) -> PropertiesList {
+        PropertiesList(
+            memberBlock.members.flatMap { member in
+                parse(declaration: member.decl, in: context)
+            }
+        )
+    }
 
     public static func parse(
         declaration: some DeclSyntaxProtocol,
-        in context: some MacroExpansionContext
+        in context: some MacroExpansionContext,
+        ifConfigClauses: IfConfigClauseSyntax? = nil
     ) -> PropertiesList {
+        if let ifConfigDecl = IfConfigDeclSyntax(declaration) {
+            return PropertiesList(ifConfigDecl.clauses.flatMap { declaration -> PropertiesList in
+                guard let elements = declaration.elements?.as(MemberBlockItemListSyntax.self)
+                else {
+                    return .init([])
+                }
+
+                return PropertiesList(elements.flatMap { item in
+                    Self.parse(declaration: item.decl, in: context, ifConfigClauses: declaration)
+                })
+            })
+        }
+
         guard let declaration = VariableDeclSyntax(declaration) else {
-            return .init()
+            return .init([])
         }
 
         return PropertiesList(
@@ -41,7 +66,8 @@ public enum PropertiesParser: _Parser {
                     declaration: declaration,
                     binding: binding,
                     name: name,
-                    inferredType: inferredType
+                    inferredType: inferredType,
+                    ifConfig: ifConfigClauses
                 )
             }
         )

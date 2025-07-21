@@ -34,7 +34,7 @@ public struct SwitchExprBuilder: ExprBuilder {
 
     private func switchCases() -> SwitchCaseListSyntax {
         SwitchCaseListSyntax(
-            cases.map { enumCase in
+            cases.all.map { enumCase in
                 .switchCase(
                     SwitchCaseSyntax("""
                     case \(switchCase(for: enumCase)):
