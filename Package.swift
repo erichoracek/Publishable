@@ -27,7 +27,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/swiftlang/swift-syntax",
-            "600.0.0" ..< "602.0.0"
+            from: "602.0.0"
         )
     ],
     targets: [
